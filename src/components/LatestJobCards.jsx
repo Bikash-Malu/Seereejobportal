@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 
 const LatestJobCards = ({ job }) => {
   const navigate = useNavigate();
+  
   return (
     <div
       onClick={() => navigate(`/description/${job._id}`)}
-      className="relative flex flex-col justify-between p-5 rounded-xl shadow-lg bg-white border border-gray-200 cursor-pointer transition-all transform hover:scale-[1.03] hover:shadow-xl max-w-full md:max-w-sm lg:max-w-md mx-auto"
+      className="relative flex flex-col justify-between p-5 rounded-xl shadow-lg bg-white border border-gray-200 cursor-pointer transition-all transform hover:scale-[1.03] hover:shadow-xl max-w-full w-full mx-auto"
     >
       {/* Header: Company and Location */}
       <div className="flex justify-between items-center mb-4">
