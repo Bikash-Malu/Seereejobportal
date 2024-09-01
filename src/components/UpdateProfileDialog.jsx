@@ -1,14 +1,15 @@
-import React, { useState } from 'react'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog'
-import { Label } from './ui/label'
-import { Input } from './ui/input'
-import { Button } from './ui/button'
-import { Loader2, X } from 'lucide-react' // Importing the close icon (X)
-import { useDispatch, useSelector } from 'react-redux'
-import axios from 'axios'
-import { USER_API_END_POINT } from '@/utils/constant'
-import { setUser } from '@/redux/authSlice'
-import { toast } from 'sonner'
+import React, { useState } from 'react';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
+import { Label } from './ui/label';
+import { Input } from './ui/input'; // Import Textarea if available
+import { Button } from './ui/button';
+import { Loader2, X } from 'lucide-react'; // Importing the close icon (X)
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import { USER_API_END_POINT } from '@/utils/constant';
+import { setUser } from '@/redux/authSlice';
+import { toast } from 'sonner';
+import { Textarea } from './ui/textarea';
 
 const UpdateProfileDialog = ({ open, setOpen }) => {
     const [loading, setLoading] = useState(false);
@@ -22,6 +23,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         skills: user?.profile?.skills?.map(skill => skill) || "",
         file: user?.profile?.resume || ""
     });
+
     const dispatch = useDispatch();
 
     const changeEventHandler = (e) => {
@@ -71,13 +73,6 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                 <DialogContent className="sm:max-w-[425px]" onInteractOutside={() => setOpen(false)}>
                     <DialogHeader>
                         <DialogTitle>Update Profile</DialogTitle>
-                        <Button 
-                            type="button" 
-                            className="absolute top-2 right-2" 
-                            onClick={() => setOpen(false)}
-                        >
-                            <X className="h-5 w-5" />
-                        </Button>
                     </DialogHeader>
                     <form onSubmit={submitHandler}>
                         <div className='grid gap-4 py-4'>
@@ -115,7 +110,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                             </div>
                             <div className='grid grid-cols-4 items-center gap-4'>
                                 <Label htmlFor="bio" className="text-right">Bio</Label>
-                                <Input
+                                <Textarea
                                     id="bio"
                                     name="bio"
                                     value={input.bio}
@@ -158,7 +153,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                 </DialogContent>
             </Dialog>
         </div>
-    )
+    );
 }
 
 export default UpdateProfileDialog;
