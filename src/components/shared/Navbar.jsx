@@ -18,8 +18,15 @@ const Navbar = () => {
 
     const logoutHandler = async () => {
         try {
+            // Make API call to log out
             const res = await axios.get(`${USER_API_END_POINT}/logout`, { withCredentials: true });
             if (res.data.success) {
+                // Clear cookies (optional, usually handled by server)
+                document.cookie.split(';').forEach(cookie => {
+                    document.cookie = cookie.replace(/^ +/, '').replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+                });
+
+                // Clear user state and navigate
                 dispatch(setUser(null));
                 navigate('/');
                 toast.success(res.data.message);
@@ -30,7 +37,7 @@ const Navbar = () => {
         }
     };
 
-    const toggleMenu = () => setIsMenuOpen(!isMenuOpen); // Toggle the menu state
+    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
     return (
         <div className="bg-white">
