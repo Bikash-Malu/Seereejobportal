@@ -19,13 +19,8 @@ const Job = ({ job }) => {
         return Math.floor(timeDifference / (1000 * 60 * 60 * 24));
     }
 
-    // Handle bookmark button click
     const handleBookmarkClick = () => {
-        // Toggle the bookmark state
         setIsBookmarked(!isBookmarked);
-        
-        // Optionally, you can add logic here to save the bookmark state to a backend or local storage
-        // Example: Call an API or use localStorage.setItem('bookmarkedJobs', JSON.stringify(updatedJobs));
     }
 
     return (

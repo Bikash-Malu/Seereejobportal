@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Label } from './ui/label'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
-import { Loader2 } from 'lucide-react'
+import { Loader2, X } from 'lucide-react' // Importing the close icon (X)
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { USER_API_END_POINT } from '@/utils/constant'
@@ -30,7 +30,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
 
     const fileChangeHandler = (e) => {
         const file = e.target.files?.[0];
-        setInput({ ...input, file })
+        setInput({ ...input, file });
     }
 
     const submitHandler = async (e) => {
@@ -59,29 +59,33 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         } catch (error) {
             console.log(error);
             toast.error(error.response.data.message);
-        } finally{
+        } finally {
             setLoading(false);
         }
         setOpen(false);
-        console.log(input);
     }
-
-
 
     return (
         <div>
-            <Dialog open={open}>
+            <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="sm:max-w-[425px]" onInteractOutside={() => setOpen(false)}>
                     <DialogHeader>
                         <DialogTitle>Update Profile</DialogTitle>
+                        <Button 
+                            type="button" 
+                            className="absolute top-2 right-2" 
+                            onClick={() => setOpen(false)}
+                        >
+                            <X className="h-5 w-5" />
+                        </Button>
                     </DialogHeader>
                     <form onSubmit={submitHandler}>
                         <div className='grid gap-4 py-4'>
                             <div className='grid grid-cols-4 items-center gap-4'>
-                                <Label htmlFor="name" className="text-right">Name</Label>
+                                <Label htmlFor="fullname" className="text-right">Name</Label>
                                 <Input
-                                    id="name"
-                                    name="name"
+                                    id="fullname"
+                                    name="fullname"
                                     type="text"
                                     value={input.fullname}
                                     onChange={changeEventHandler}
@@ -100,10 +104,10 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                                 />
                             </div>
                             <div className='grid grid-cols-4 items-center gap-4'>
-                                <Label htmlFor="number" className="text-right">Number</Label>
+                                <Label htmlFor="phoneNumber" className="text-right">Number</Label>
                                 <Input
-                                    id="number"
-                                    name="number"
+                                    id="phoneNumber"
+                                    name="phoneNumber"
                                     value={input.phoneNumber}
                                     onChange={changeEventHandler}
                                     className="col-span-3"
@@ -142,9 +146,13 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                             </div>
                         </div>
                         <DialogFooter>
-                            {
-                                loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Update</Button>
-                            }
+                            {loading ? (
+                                <Button className="w-full my-4">
+                                    <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait
+                                </Button>
+                            ) : (
+                                <Button type="submit" className="w-full my-4">Update</Button>
+                            )}
                         </DialogFooter>
                     </form>
                 </DialogContent>
@@ -153,4 +161,4 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
     )
 }
 
-export default UpdateProfileDialog
+export default UpdateProfileDialog;
