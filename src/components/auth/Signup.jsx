@@ -149,7 +149,7 @@ const Signup = () => {
                                     onChange={changeEventHandler}
                                     className="cursor-pointer"
                                 />
-                                <Label htmlFor="r2">Recruiter</Label>
+                                <Label htmlFor="r2">Seeree authority</Label>
                             </div>
                         </RadioGroup>
                         <div className='flex items-center gap-2'>
