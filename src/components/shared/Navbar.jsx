@@ -21,9 +21,10 @@ const Navbar = () => {
             // Make API call to log out
             const res = await axios.get(`${USER_API_END_POINT}/logout`, { withCredentials: true });
             if (res.data.success) {
-                // Clear cookies (optional, usually handled by server)
+                // Clear all cookies
                 document.cookie.split(';').forEach(cookie => {
-                    document.cookie = cookie.replace(/^ +/, '').replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+                    const cookieName = cookie.split('=')[0].trim();
+                    document.cookie = `${cookieName}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
                 });
 
                 // Clear user state and navigate
