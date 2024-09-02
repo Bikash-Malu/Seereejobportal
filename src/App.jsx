@@ -15,6 +15,7 @@ import PostJob from './components/admin/PostJob'
 import Applicants from './components/admin/Applicants'
 import ProtectedRoute from './components/admin/ProtectedRoute'
 import JobsContainer from './components/JobsContainer'
+import ForgotPassword from './components/auth/ForgotPassword'
 
 
 const appRouter = createBrowserRouter([
@@ -25,6 +26,10 @@ const appRouter = createBrowserRouter([
   {
     path: '/login',
     element: <Login />
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPassword />
   },
   {
     path: '/signup',
