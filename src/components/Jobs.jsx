@@ -4,6 +4,7 @@ import FilterCard from './FilterCard';
 import Job from './Job';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
+import { setSearchedQuery } from '@/redux/jobSlice';
 
 const Jobs = () => {
     const { allJobs, searchedQuery } = useSelector((store) => store.job);
@@ -16,7 +17,7 @@ const Jobs = () => {
         if (!searchTerm) {
             setFilterJobs(allJobs);
         }
-    }, [allJobs]);
+    }, [allJobs, searchTerm]);
 
     useEffect(() => {
         // Filter jobs based on searchTerm
@@ -32,6 +33,12 @@ const Jobs = () => {
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
+        dispatch(setSearchedQuery(event.target.value)); // Dispatch the search term to Redux store
+    };
+
+    const handleFilterChange = (value) => {
+        setSearchTerm(value); // Update search term based on selected filter value
+        dispatch(setSearchedQuery(value)); // Dispatch to Redux store
     };
 
     return (
@@ -40,7 +47,7 @@ const Jobs = () => {
             <div className="max-w-7xl mx-auto mt-5 px-4">
                 <div className="flex flex-col md:flex-row gap-5">
                     <div className="w-full md:w-1/4 lg:w-1/5">
-                        <FilterCard />
+                        <FilterCard onFilterChange={handleFilterChange} />
                     </div>
                     <div className="w-full md:w-3/4 lg:w-4/5">
                         <div className="mb-4">
