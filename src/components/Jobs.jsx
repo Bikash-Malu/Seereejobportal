@@ -8,22 +8,26 @@ import { motion } from 'framer-motion';
 const Jobs = () => {
     const { allJobs, searchedQuery } = useSelector((store) => store.job);
     const dispatch = useDispatch();
-    const [filterJobs, setFilterJobs] = useState(allJobs);
+    const [filterJobs, setFilterJobs] = useState([]);
     const [searchTerm, setSearchTerm] = useState(searchedQuery || '');
 
     useEffect(() => {
-        if (searchTerm) {
-            const filteredJobs = allJobs.filter((job) => {
-                return (
-                    job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    job.location.toLowerCase().includes(searchTerm.toLowerCase())
-                );
-            });
-            setFilterJobs(filteredJobs);
-        } else {
+        // Initialize filterJobs with allJobs when the component mounts or when allJobs changes
+        if (!searchTerm) {
             setFilterJobs(allJobs);
         }
+    }, [allJobs]);
+
+    useEffect(() => {
+        // Filter jobs based on searchTerm
+        const filteredJobs = allJobs.filter((job) => {
+            return (
+                job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                job.location.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        });
+        setFilterJobs(filteredJobs);
     }, [allJobs, searchTerm]);
 
     const handleSearchChange = (event) => {
@@ -60,7 +64,7 @@ const Jobs = () => {
                                             animate={{ opacity: 1, x: 0 }}
                                             exit={{ opacity: 0, x: -100 }}
                                             transition={{ duration: 0.3 }}
-                                            key={job?._id}
+                                            key={job._id}
                                         >
                                             <Job job={job} />
                                         </motion.div>
