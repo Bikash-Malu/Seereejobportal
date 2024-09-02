@@ -15,9 +15,10 @@ const ForgotPassword = () => {
     const [otpSent, setOtpSent] = useState(false);
     const [otpVerified, setOtpVerified] = useState(false);
     const [newPassword, setNewPassword] = useState(""); // State for new password
-    const [timer, setTimer] = useState(120); // 2 minutes in seconds
+    const [timer, setTimer] = useState(600); // 10 minutes in seconds
     const [timerActive, setTimerActive] = useState(false);
-    const navigate=useNavigate();
+    const navigate = useNavigate();
+
     useEffect(() => {
         let interval;
         if (timerActive && otpSent) {
@@ -26,6 +27,7 @@ const ForgotPassword = () => {
                     if (prev <= 1) {
                         clearInterval(interval);
                         setTimerActive(false);
+                        navigate('/login'); // Navigate to login when the timer expires
                         return 0;
                     }
                     return prev - 1;
@@ -33,7 +35,7 @@ const ForgotPassword = () => {
             }, 1000);
         }
         return () => clearInterval(interval);
-    }, [timerActive, otpSent]);
+    }, [timerActive, otpSent, navigate]);
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -71,7 +73,7 @@ const ForgotPassword = () => {
             if (res.data.success) {
                 toast.success('OTP has been sent to your email.');
                 setOtpSent(true); // OTP has been sent
-                setTimer(120); // Reset timer
+                setTimer(600); // Reset timer to 10 minutes
                 setTimerActive(true); // Start the timer
             }
         } catch (error) {
@@ -134,8 +136,7 @@ const ForgotPassword = () => {
 
             if (resetRes.data.success) {
                 toast.success(resetRes.data.message);
-                navigate('/login')
-           
+                navigate('/login'); // Redirect to login page after successful reset
             } else {
                 toast.error(resetRes.data.message || 'Error resetting password');
             }
