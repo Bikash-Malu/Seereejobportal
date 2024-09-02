@@ -117,6 +117,10 @@ const Login = () => {
                             </div>
                         </RadioGroup>
                     </div>
+{/* Forgot Password Link */}
+<span className='text-sm'>
+    <Link to="/forgot-password" className='text-blue-600'>Forgot Password?</Link>
+</span>
 
                     {/* Submit Button or Loader */}
                     {loading ? (
