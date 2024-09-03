@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Navbar from '../shared/Navbar';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
@@ -11,6 +11,8 @@ import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/redux/authSlice';
 import { Loader2 } from 'lucide-react';
+import Cropper from 'react-cropper';
+import 'cropperjs/dist/cropper.css';
 
 const Signup = () => {
     const [input, setInput] = useState({
@@ -21,6 +23,9 @@ const Signup = () => {
         role: "",
         file: ""
     });
+    const [cropData, setCropData] = useState(null);
+    const [showCropper, setShowCropper] = useState(false);
+    const cropperRef = useRef(null);
     const { loading, user } = useSelector(store => store.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -28,14 +33,30 @@ const Signup = () => {
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
     };
-    
+
     const changeFileHandler = (e) => {
-        setInput({ ...input, file: e.target.files?.[0] });
+        const file = e.target.files?.[0];
+        if (file) {
+            setInput({ ...input, file });
+            setShowCropper(true); // Show the cropper modal
+        }
+    };
+
+    const cropImage = () => {
+        if (cropperRef.current) {
+            const cropper = cropperRef.current.cropper;
+            const croppedCanvas = cropper.getCroppedCanvas();
+            croppedCanvas.toBlob((blob) => {
+                const file = new File([blob], input.file.name, { type: blob.type });
+                setInput({ ...input, file });
+                setShowCropper(false); // Close the cropper modal
+            }, 'image/jpeg');
+        }
     };
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        const formData = new FormData();    
+        const formData = new FormData();
         formData.append("fullname", input.fullname);
         formData.append("email", input.email);
         formData.append("phoneNumber", input.phoneNumber);
@@ -75,7 +96,7 @@ const Signup = () => {
             <div className='flex items-center justify-center px-4 sm:px-6 lg:px-8'>
                 <form onSubmit={submitHandler} className='w-full max-w-md bg-white border border-gray-200 rounded-md p-6 sm:p-8 my-10'>
                     <h1 className='font-bold text-xl mb-5'>Sign Up</h1>
-                    
+
                     {/* Full Name Input */}
                     <div className='my-2'>
                         <Label>Full Name</Label>
@@ -144,12 +165,11 @@ const Signup = () => {
                                     name="role"
                                     disabled
                                     value="recruiter"
-                                 
                                     checked={input.role === 'recruiter'}
                                     onChange={changeEventHandler}
                                     className="cursor-pointer"
                                 />
-                                <Label htmlFor="r2">Seeree</Label>
+                                <Label htmlFor="r2">Recruiter</Label>
                             </div>
                         </RadioGroup>
                         <div className='flex items-center gap-2'>
@@ -178,6 +198,28 @@ const Signup = () => {
                     </span>
                 </form>
             </div>
+
+            {/* Cropper Modal */}
+            {showCropper && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded shadow-lg">
+                        <h2 className='text-lg font-semibold mb-4'>Crop Your Image</h2>
+                        <Cropper
+                            src={URL.createObjectURL(input.file)}
+                            style={{ height: 400, width: '100%' }}
+                            // Cropper.js options
+                            initialAspectRatio={1}
+                            aspectRatio={1}
+                            guides={false}
+                            ref={cropperRef}
+                        />
+                        <div className="flex justify-end mt-4">
+                            <Button onClick={() => setShowCropper(false)} className="mr-2">Cancel</Button>
+                            <Button onClick={cropImage} className="bg-blue-500 text-white">Done</Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
