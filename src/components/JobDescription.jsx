@@ -59,7 +59,7 @@ const JobDescription = () => {
                     <div className="flex flex-wrap gap-2">
                         <Badge className="text-blue-700 font-bold bg-blue-100 px-2 py-1 rounded">{singleJob?.position} Positions</Badge>
                         <Badge className="text-[#F83002] font-bold bg-red-100 px-2 py-1 rounded">{singleJob?.jobType}</Badge>
-                        <Badge className="text-[#7209b7] font-bold bg-purple-100 px-2 py-1 rounded">{singleJob?.salary} LPA</Badge>
+                        <Badge className="text-[#b709ab] font-bold bg-purple-100 px-2 py-1 rounded">{singleJob?.salary} LPA</Badge>
                     </div>
                 </div>
                 <Button

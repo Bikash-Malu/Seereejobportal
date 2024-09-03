@@ -1,31 +1,28 @@
-
 import React, { useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
 import { Avatar, AvatarImage } from '../ui/avatar';
-import { LogOut, User2, Menu } from 'lucide-react'; // Use Lucide-react for the Menu icon
+import { LogOut, User2, Menu } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { USER_API_END_POINT } from '@/utils/constant';
 import { setUser } from '@/redux/authSlice';
 import { toast } from 'sonner';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'; // Import Dialog components
 
 const Navbar = () => {
     const { user } = useSelector((store) => store.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [isMenuOpen, setIsMenuOpen] = useState(false); // State to manage the menu visibility
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false); // State to control profile modal
 
     const logoutHandler = async () => {
         try {
-            // Make API call to log out
             const res = await axios.get(`${USER_API_END_POINT}/logout`, { withCredentials: true });
             if (res.data.success) {
-                // Remove the specific cookie named 'token'
                 document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-                
-                // Clear user state and navigate
                 dispatch(setUser(null));
                 navigate('/');
                 toast.success(res.data.message);
@@ -37,6 +34,8 @@ const Navbar = () => {
     };
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    const openProfileModal = () => setIsProfileOpen(true); // Open modal function
+    const closeProfileModal = () => setIsProfileOpen(false); // Close modal function
 
     return (
         <div className="bg-white">
@@ -104,13 +103,51 @@ const Navbar = () => {
                                         </div>
                                     </div>
                                     <div className="flex flex-col my-2 text-gray-600">
-                                        {user && user.role === 'student' && (
+                                        {(user && user.role === 'student') && (
                                             <div className="flex w-fit items-center gap-2 cursor-pointer">
                                                 <User2 />
                                                 <Button variant="link">
                                                     <Link to="/profile">View Profile</Link>
                                                 </Button>
                                             </div>
+                                        )}
+                                        {(user && user.role === 'recruiter') && (
+                                            <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+                                                <DialogTrigger asChild>
+                                                    <div className="flex w-fit items-center gap-2 cursor-pointer" onClick={openProfileModal}>
+                                                        <User2 />
+                                                        <Button variant="link">View Profile</Button>
+                                                    </div>
+                                                </DialogTrigger>
+                                                <DialogContent>
+    <DialogHeader>
+        <DialogTitle>Recruiter Profile</DialogTitle>
+    </DialogHeader>
+    {/* Display Recruiter's Profile Photo at the Top */}
+    <div className="flex justify-center mt-4">
+        <Avatar className="w-32 h-32">
+            <AvatarImage src={user?.profile?.profilePhoto} alt={`${user?.fullname}'s Profile Photo`} />
+        </Avatar>
+    </div>
+    {/* Display Recruiter's Details Below the Image */}
+    <div className="p-4">
+        <div className="text-center mt-4">
+            {/* Display Name and Role */}
+            <h2 className="text-lg font-semibold">{user?.fullname}</h2>
+            <p className="text-sm text-muted-foreground">
+                {user?.role.charAt(0).toUpperCase() + user?.role.slice(1)}
+            </p>
+        </div>
+        {/* Display Additional Recruiter Details */}
+        <div className="mt-4 space-y-2 text-center">
+            <p><strong>Email:</strong> {user?.email}</p>
+            <p><strong>Bio:</strong> {user?.profile?.bio || 'No bio available'}</p>
+            {/* Add more details if needed */}
+        </div>
+    </div>
+</DialogContent>
+
+                                            </Dialog>
                                         )}
                                         <div className="flex w-fit items-center gap-2 cursor-pointer">
                                             <LogOut />
@@ -176,12 +213,18 @@ const Navbar = () => {
                             </>
                         ) : (
                             <div className="flex flex-col my-2 text-gray-600">
-                                {user && user.role === 'student' && (
+                                {(user && user.role === 'student') && (
                                     <div className="flex w-fit items-center gap-2 cursor-pointer">
                                         <User2 />
                                         <Button variant="link">
                                             <Link to="/profile">View Profile</Link>
                                         </Button>
+                                    </div>
+                                )}
+                                {(user && user.role === 'recruiter') && (
+                                    <div className="flex w-fit items-center gap-2 cursor-pointer" onClick={openProfileModal}>
+                                        <User2 />
+                                        <Button variant="link">View Profile</Button>
                                     </div>
                                 )}
                                 <div className="flex w-fit items-center gap-2 cursor-pointer">
