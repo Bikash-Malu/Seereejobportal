@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -14,12 +13,14 @@ const JobDescription = () => {
     const { user } = useSelector((store) => store.auth);
     const isInitiallyApplied = singleJob?.applications?.some((application) => application.applicant === user?._id) || false;
     const [isApplied, setIsApplied] = useState(isInitiallyApplied);
+    const [loading, setLoading] = useState(false);
 
     const params = useParams();
     const jobId = params.id;
     const dispatch = useDispatch();
 
     const applyJobHandler = async () => {
+        setLoading(true); // Set loading state to true
         try {
             const res = await axios.get(`${APPLICATION_API_END_POINT}/apply/${jobId}`, { withCredentials: true });
 
@@ -31,7 +32,9 @@ const JobDescription = () => {
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.response.data.message);
+            toast.error(error.response?.data?.message || 'Something went wrong');
+        } finally {
+            setLoading(false); // Reset loading state
         }
     };
 
@@ -63,13 +66,13 @@ const JobDescription = () => {
                     </div>
                 </div>
                 <Button
-                    onClick={isApplied ? null : applyJobHandler}
-                    disabled={isApplied}
+                    onClick={isApplied || loading ? null : applyJobHandler}
+                    disabled={isApplied || loading}
                     className={`py-2 px-4 text-white rounded-md transition-all duration-300 ${
                         isApplied ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#7209b7] hover:bg-[#5f32ad]'
                     }`}
                 >
-                    {isApplied ? 'Already Applied' : 'Apply Now'}
+                    {loading ? 'Applying...' : isApplied ? 'Already Applied' : 'Apply Now'}
                 </Button>
             </div>
 
