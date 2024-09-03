@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { MoreHorizontal, Trash2 } from 'lucide-react';
@@ -6,15 +6,19 @@ import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import { APPLICATION_API_END_POINT } from '@/utils/constant';
 import axios from 'axios';
-import { confirmAlert } from 'react-confirm-alert'; // Import confirmation dialog
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Import default styles for the dialog
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import { ClipLoader } from 'react-spinners';
 
 const shortlistingStatus = ["Accepted", "Rejected"];
 
 const ApplicantsTable = () => {
     const { applicants } = useSelector(store => store.application);
+    const [localApplicants, setLocalApplicants] = useState(applicants?.applications || []); // Local state for applicants
+    const [loadingStatus, setLoadingStatus] = useState({}); // State to manage loading for each applicant
 
     const statusHandler = async (status, id) => {
+        setLoadingStatus(prev => ({ ...prev, [id]: status })); // Set loading to the specific status for this applicant
         try {
             axios.defaults.withCredentials = true;
             const res = await axios.post(`${APPLICATION_API_END_POINT}/status/${id}/update`, { status });
@@ -23,20 +27,26 @@ const ApplicantsTable = () => {
             }
         } catch (error) {
             toast.error(error.response.data.message);
+        } finally {
+            setLoadingStatus(prev => ({ ...prev, [id]: null })); // Reset loading status for this applicant
         }
     };
 
     const handleDeleteApplicant = async (id) => {
+        setLoadingStatus(prev => ({ ...prev, [id]: 'Deleting' })); // Set loading to 'Deleting' for this applicant
         try {
             axios.defaults.withCredentials = true;
             const res = await axios.delete(`${APPLICATION_API_END_POINT}/applicants/${id}`);
 
             if (res.data.success) {
                 toast.success(res.data.message);
-                // Optionally remove the deleted applicant from the local state to update the UI
+                // Remove the deleted applicant from the local state
+                setLocalApplicants(prev => prev.filter(applicant => applicant._id !== id));
             }
         } catch (error) {
             toast.error(error.response.data.message || "Failed to delete the applicant. Please try again.");
+        } finally {
+            setLoadingStatus(prev => ({ ...prev, [id]: null })); // Reset loading status for this applicant
         }
     };
 
@@ -72,7 +82,7 @@ const ApplicantsTable = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {applicants && applicants?.applications?.map((item) => (
+                    {localApplicants.map((item) => (
                         <tr key={item._id}>
                             <TableCell>{item?.applicant?.fullname}</TableCell>
                             <TableCell>{item?.applicant?.email}</TableCell>
@@ -102,8 +112,11 @@ const ApplicantsTable = () => {
                                             <div
                                                 onClick={() => statusHandler(status, item?._id)}
                                                 key={index}
-                                                className="flex w-fit items-center my-2 cursor-pointer"
+                                                className="flex items-center my-2 cursor-pointer"
                                             >
+                                                {loadingStatus[item._id] === status && (
+                                                    <ClipLoader size={16} color={"#3498db"} loading={true} className="mr-2" />
+                                                )}
                                                 <span>{status}</span>
                                             </div>
                                         ))}
@@ -111,6 +124,9 @@ const ApplicantsTable = () => {
                                             onClick={() => confirmDeleteApplicant(item?._id)}
                                             className="flex w-fit items-center my-2 cursor-pointer text-red-600"
                                         >
+                                            {loadingStatus[item._id] === 'Deleting' && (
+                                                <ClipLoader size={16} color={"#e74c3c"} loading={true} className="mr-2" />
+                                            )}
                                             <Trash2 className="w-4" />
                                             <span>Delete</span>
                                         </div>
