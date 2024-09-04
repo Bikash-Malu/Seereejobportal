@@ -163,7 +163,6 @@ const Signup = () => {
                                 <Input
                                     type="radio"
                                     name="role"
-                                    disabled
                                     value="recruiter"
                                     checked={input.role === 'recruiter'}
                                     onChange={changeEventHandler}
