@@ -122,8 +122,9 @@ const Navbar = () => {
                     </div>
                   </div>
 
-                  {/* Common Logout Section */}
+                  {/* Common Logout and View Profile Section for both Roles */}
                   <div className="flex flex-col my-2 text-gray-600">
+                    {/* For student role */}
                     {user.role === "student" && (
                       <div className="flex w-fit items-center gap-2 cursor-pointer">
                         <User2 />
@@ -133,7 +134,7 @@ const Navbar = () => {
                       </div>
                     )}
 
-                    {/* Recruiter Specific Profile Section */}
+                    {/* For recruiter role */}
                     {user.role === "recruiter" && (
                       <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
                         <DialogTrigger asChild>
@@ -243,6 +244,7 @@ const Navbar = () => {
               </>
             ) : (
               <div className="flex flex-col my-2 text-gray-600">
+                {/* Student View Profile */}
                 {user && user.role === "student" && (
                   <div className="flex w-fit items-center gap-2 cursor-pointer">
                     <User2 />
@@ -251,6 +253,7 @@ const Navbar = () => {
                     </Button>
                   </div>
                 )}
+                {/* Recruiter View Profile */}
                 {user && user.role === "recruiter" && (
                   <div
                     className="flex w-fit items-center gap-2 cursor-pointer"
