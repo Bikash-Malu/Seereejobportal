@@ -121,8 +121,10 @@ const Navbar = () => {
                       </p>
                     </div>
                   </div>
+
+                  {/* Common Logout Section */}
                   <div className="flex flex-col my-2 text-gray-600">
-                    {user && user.role === "student" && (
+                    {user.role === "student" && (
                       <div className="flex w-fit items-center gap-2 cursor-pointer">
                         <User2 />
                         <Button variant="link">
@@ -130,53 +132,51 @@ const Navbar = () => {
                         </Button>
                       </div>
                     )}
-               {user && user.role === "recruiter" && (
-  <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-    <DialogTrigger asChild>
-      <div className="flex w-fit items-center gap-2 cursor-pointer">
-        <User2 />
-        <Button variant="link" onClick={openProfileModal}>
-          View Profile
-        </Button>
-      </div>
-    </DialogTrigger>
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Recruiter Profile</DialogTitle>
-      </DialogHeader>
-      {/* Display Recruiter's Profile Photo at the Top */}
-      <div className="flex justify-center mt-4">
-        <Avatar className="w-32 h-32">
-          <AvatarImage
-            src={user?.profile?.profilePhoto}
-            alt={`${user?.fullname}'s Profile Photo`}
-          />
-        </Avatar>
-      </div>
-      {/* Display Recruiter's Details Below the Image */}
-      <div className="p-4">
-        <div className="text-center mt-4">
-          {/* Display Name and Role */}
-          <h2 className="text-lg font-semibold">{user?.fullname}</h2>
-          <p className="text-sm text-muted-foreground">
-            {user?.role.charAt(0).toUpperCase() + user?.role.slice(1)}
-          </p>
-        </div>
-        {/* Display Additional Recruiter Details */}
-        <div className="mt-4 space-y-2 text-center">
-          <p>
-            <strong>Email:</strong> {user?.email}
-          </p>
-          <p>
-            <strong>Bio:</strong> {user?.profile?.bio || "No bio available"}
-          </p>
-          {/* Add more details if needed */}
-        </div>
-      </div>
-    </DialogContent>
-  </Dialog>
-)}
 
+                    {/* Recruiter Specific Profile Section */}
+                    {user.role === "recruiter" && (
+                      <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+                        <DialogTrigger asChild>
+                          <div className="flex w-fit items-center gap-2 cursor-pointer">
+                            <User2 />
+                            <Button variant="link" onClick={openProfileModal}>
+                              View Profile
+                            </Button>
+                          </div>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Recruiter Profile</DialogTitle>
+                          </DialogHeader>
+                          <div className="flex justify-center mt-4">
+                            <Avatar className="w-32 h-32">
+                              <AvatarImage
+                                src={user?.profile?.profilePhoto}
+                                alt={`${user?.fullname}'s Profile Photo`}
+                              />
+                            </Avatar>
+                          </div>
+                          <div className="p-4">
+                            <div className="text-center mt-4">
+                              <h2 className="text-lg font-semibold">{user?.fullname}</h2>
+                              <p className="text-sm text-muted-foreground">
+                                {user?.role.charAt(0).toUpperCase() + user?.role.slice(1)}
+                              </p>
+                            </div>
+                            <div className="mt-4 space-y-2 text-center">
+                              <p>
+                                <strong>Email:</strong> {user?.email}
+                              </p>
+                              <p>
+                                <strong>Bio:</strong> {user?.profile?.bio || "No bio available"}
+                              </p>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    )}
+
+                    {/* Logout Button for both Roles */}
                     <div className="flex w-fit items-center gap-2 cursor-pointer">
                       <LogOut />
                       <Button onClick={logoutHandler} variant="link">
