@@ -243,14 +243,20 @@ const Navbar = () => {
               </>
             ) : (
               <div className="flex flex-col my-2 text-gray-600">
-                {user && user.role === "student" && (
-                  <div className="flex w-fit items-center gap-2 cursor-pointer">
-                    <User2 />
-                    <Button variant="link">
-                      <Link to="/profile">View Profile</Link>
-                    </Button>
-                  </div>
-                )}
+            {user && user.role === "student" && (
+  <div className="flex w-fit items-center gap-2 cursor-pointer">
+    <Avatar className="cursor-pointer">
+      <AvatarImage
+        src={user?.profile?.profilePhoto || "/path-to-default-avatar.png"}
+        alt={user?.fullname || "Default Avatar"}
+      />
+    </Avatar>
+    <Button variant="link">
+      <Link to="/profile">View Profile</Link>
+    </Button>
+  </div>
+)}
+
                 {user && user.role === "recruiter" && (
                   <div
                     className="flex w-fit items-center gap-2 cursor-pointer"
