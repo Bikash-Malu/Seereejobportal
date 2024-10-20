@@ -124,60 +124,13 @@ const Navbar = () => {
 
                   {/* Common Logout and View Profile Section for both Roles */}
                   <div className="flex flex-col my-2 text-gray-600">
-                    {/* For student role */}
-                    {user.role === "student" && (
-                      <div className="flex w-fit items-center gap-2 cursor-pointer">
-                        <User2 />
-                        <Button variant="link">
-                          <Link to="/profile">View Profile</Link>
-                        </Button>
-                      </div>
-                    )}
+                    <div className="flex w-fit items-center gap-2 cursor-pointer">
+                      <User2 />
+                      <Button variant="link">
+                        <Link to="/profile">View Profile</Link>
+                      </Button>
+                    </div>
 
-                    {/* For recruiter role */}
-                    {user.role === "recruiter" && (
-                      <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-                        <DialogTrigger asChild>
-                          <div className="flex w-fit items-center gap-2 cursor-pointer">
-                            <User2 />
-                            <Button variant="link" onClick={openProfileModal}>
-                              View Profile
-                            </Button>
-                          </div>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Recruiter Profile</DialogTitle>
-                          </DialogHeader>
-                          <div className="flex justify-center mt-4">
-                            <Avatar className="w-32 h-32">
-                              <AvatarImage
-                                src={user?.profile?.profilePhoto}
-                                alt={`${user?.fullname}'s Profile Photo`}
-                              />
-                            </Avatar>
-                          </div>
-                          <div className="p-4">
-                            <div className="text-center mt-4">
-                              <h2 className="text-lg font-semibold">{user?.fullname}</h2>
-                              <p className="text-sm text-muted-foreground">
-                                {user?.role.charAt(0).toUpperCase() + user?.role.slice(1)}
-                              </p>
-                            </div>
-                            <div className="mt-4 space-y-2 text-center">
-                              <p>
-                                <strong>Email:</strong> {user?.email}
-                              </p>
-                              <p>
-                                <strong>Bio:</strong> {user?.profile?.bio || "No bio available"}
-                              </p>
-                            </div>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    )}
-
-                    {/* Logout Button for both Roles */}
                     <div className="flex w-fit items-center gap-2 cursor-pointer">
                       <LogOut />
                       <Button onClick={logoutHandler} variant="link">
@@ -244,25 +197,12 @@ const Navbar = () => {
               </>
             ) : (
               <div className="flex flex-col my-2 text-gray-600">
-                {/* Student View Profile */}
-                {user && user.role === "student" && (
-                  <div className="flex w-fit items-center gap-2 cursor-pointer">
-                    <User2 />
-                    <Button variant="link">
-                      <Link to="/profile">View Profile</Link>
-                    </Button>
-                  </div>
-                )}
-                {/* Recruiter View Profile */}
-                {user && user.role === "recruiter" && (
-                  <div
-                    className="flex w-fit items-center gap-2 cursor-pointer"
-                    onClick={openProfileModal}
-                  >
-                    <User2 />
-                    <Button variant="link" >View Profile</Button>
-                  </div>
-                )}
+                <div className="flex w-fit items-center gap-2 cursor-pointer">
+                  <User2 />
+                  <Button variant="link">
+                    <Link to="/profile">View Profile</Link>
+                  </Button>
+                </div>
                 <div className="flex w-fit items-center gap-2 cursor-pointer">
                   <LogOut />
                   <Button onClick={logoutHandler} variant="link">
