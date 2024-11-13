@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "../ui/dialog"; // Import Dialog components
 
 const Navbar = () => {
@@ -23,7 +24,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false); // State to control profile modal
-  const [isLogoutOpen, setIsLogoutOpen] = useState(false); // State to control logout confirmation dialog
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false); // State for logout dialog
 
   const logoutHandler = async () => {
     try {
@@ -132,40 +133,67 @@ const Navbar = () => {
                       </div>
                     )}
                     {user && user.role === "recruiter" && (
-                      <div
-                        className="flex w-fit items-center gap-2 cursor-pointer"
-                        onClick={openProfileModal}
-                      >
-                        <User2 />
-                        <Button variant="link">View Profile</Button>
-                      </div>
-                    )}
-                    <Dialog open={isLogoutOpen} onOpenChange={setIsLogoutOpen}>
-                      <DialogTrigger asChild>
-                        <div className="flex w-fit items-center gap-2 cursor-pointer">
-                          <LogOut />
-                          <Button variant="link" onClick={() => setIsLogoutOpen(true)}>
-                            Logout
-                          </Button>
-                        </div>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Confirm Logout</DialogTitle>
-                        </DialogHeader>
-                        <div className="p-4">
-                          <p>Are you sure you want to logout?</p>
-                          <div className="flex justify-end gap-2 mt-4">
-                            <Button variant="outline" onClick={() => setIsLogoutOpen(false)}>
-                              Cancel
-                            </Button>
-                            <Button className="bg-red-600 text-white" onClick={logoutHandler}>
-                              Confirm Logout
+                      <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+                        <DialogTrigger asChild>
+                          <div className="flex w-fit items-center gap-2 cursor-pointer">
+                            <User2 />
+                            <Button variant="link" onClick={openProfileModal}>
+                              View Profile
                             </Button>
                           </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Recruiter Profile</DialogTitle>
+                          </DialogHeader>
+                          <div className="flex justify-center mt-4">
+                            <Avatar className="w-32 h-32">
+                              <AvatarImage
+                                src={user?.profile?.profilePhoto}
+                                alt={`${user?.fullname}'s Profile Photo`}
+                              />
+                            </Avatar>
+                          </div>
+                          <div className="p-4">
+                            <div className="text-center mt-4">
+                              <h2 className="text-lg font-semibold">{user?.fullname}</h2>
+                              <p className="text-sm text-muted-foreground">
+                                {user?.role.charAt(0).toUpperCase() + user?.role.slice(1)}
+                              </p>
+                            </div>
+                            <div className="mt-4 space-y-2 text-center">
+                              <p><strong>Email:</strong> {user?.email}</p>
+                              <p><strong>Bio:</strong> {user?.profile?.bio || "Experienced recruiter skilled in talent acquisition and employee engagement, connecting top talent with roles that drive success"}</p>
+                              <p><strong>PhoneNumber:</strong> {user?.phoneNumber || "No bio available"}</p>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    )}
+                    <div className="flex w-fit items-center gap-2 cursor-pointer">
+                      <LogOut />
+                      <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button variant="link" onClick={() => setIsLogoutDialogOpen(true)}>
+                            Logout
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Confirm Logout</DialogTitle>
+                          </DialogHeader>
+                          <div className="p-4 text-center">
+                            <p>Are you sure you want to logout?</p>
+                            <DialogFooter className="flex justify-center gap-4 mt-4">
+                              <Button variant="outline" onClick={() => setIsLogoutDialogOpen(false)}>
+                                Cancel
+                              </Button>
+                              <Button onClick={logoutHandler}>Confirm</Button>
+                            </DialogFooter>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </div>
                 </div>
               </PopoverContent>
@@ -234,18 +262,9 @@ const Navbar = () => {
                     </Button>
                   </div>
                 )}
-                {user && user.role === "recruiter" && (
-                  <div
-                    className="flex w-fit items-center gap-2 cursor-pointer"
-                    onClick={openProfileModal}
-                  >
-                    <User2 />
-                    <Button variant="link">View Profile</Button>
-                  </div>
-                )}
                 <div className="flex w-fit items-center gap-2 cursor-pointer">
                   <LogOut />
-                  <Button variant="link" onClick={() => setIsLogoutOpen(true)}>
+                  <Button variant="link" onClick={() => setIsLogoutDialogOpen(true)}>
                     Logout
                   </Button>
                 </div>
