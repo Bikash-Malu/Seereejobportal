@@ -116,7 +116,12 @@ const Navbar = () => {
                         alt="@shadcn"
                       />
                     </Avatar>
-                 
+                    <div>
+                      <h4 className="font-medium">{user?.fullname}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {user?.email}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex flex-col my-2 text-gray-600">
                     {user && user.role === "student" && (
