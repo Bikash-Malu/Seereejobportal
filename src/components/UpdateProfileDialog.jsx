@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
 import { Label } from './ui/label';
-import { Input } from './ui/input'; // Import Textarea if available
+import { Input } from './ui/input';
 import { Button } from './ui/button';
-import { Loader2, X } from 'lucide-react'; // Importing the close icon (X)
+import { Loader2 } from 'lucide-react'; 
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { USER_API_END_POINT } from '@/utils/constant';
 import { setUser } from '@/redux/authSlice';
 import { toast } from 'sonner';
 import { Textarea } from './ui/textarea';
+import Select from 'react-select'; // Import react-select
 
 const UpdateProfileDialog = ({ open, setOpen }) => {
     const [loading, setLoading] = useState(false);
@@ -20,11 +21,39 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         email: user?.email || "",
         phoneNumber: user?.phoneNumber || "",
         bio: user?.profile?.bio || "",
-        skills: user?.profile?.skills?.map(skill => skill) || "",
+        skills: user?.profile?.skills?.map(skill => ({ label: skill, value: skill })) || [],
         file: user?.profile?.resume || ""
     });
 
+    const [skillOptions, setSkillOptions] = useState([]); // For storing suggested skills
+    const [skillInput, setSkillInput] = useState(""); // Track user's input in skill field
+
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (skillInput.length > 2) { // Fetch suggestions if input is more than 2 characters
+            const fetchSkills = async () => {
+                try {
+                    const response = await axios.get(`https://api.apilayer.com/skills/suggest`, {
+                        params: { query: skillInput },
+                        headers: {
+                            'apikey': 'V72c9SpQvPhPkRZEFKUeS3WLcm0eD1jX' // Replace with your API Layer key
+                        }
+                    });
+                    if (response.data) {
+                        const suggestions = response.data.skills.map(skill => ({
+                            label: skill.name, 
+                            value: skill.name
+                        }));
+                        setSkillOptions(suggestions);
+                    }
+                } catch (error) {
+                    console.log("Error fetching skills:", error);
+                }
+            };
+            fetchSkills();
+        }
+    }, [skillInput]); // Trigger when the user types something in the skill input
 
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
@@ -35,6 +64,10 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         setInput({ ...input, file });
     }
 
+    const handleSkillsChange = (selectedOptions) => {
+        setInput({ ...input, skills: selectedOptions });
+    }
+
     const submitHandler = async (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -42,7 +75,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         formData.append("email", input.email);
         formData.append("phoneNumber", input.phoneNumber);
         formData.append("bio", input.bio);
-        formData.append("skills", input.skills);
+        formData.append("skills", input.skills.map(skill => skill.value).join(", ")); // Convert to string
         if (input.file) {
             formData.append("file", input.file);
         }
@@ -121,11 +154,14 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                             </div>
                             <div className='grid grid-cols-4 items-center gap-4'>
                                 <Label htmlFor="skills" className="text-right">Skills</Label>
-                                <Input
+                                <Select
                                     id="skills"
                                     name="skills"
                                     value={input.skills}
-                                    onChange={changeEventHandler}
+                                    onInputChange={(newInput) => setSkillInput(newInput)}
+                                    onChange={handleSkillsChange}
+                                    options={skillOptions}
+                                    isMulti
                                     className="col-span-3"
                                 />
                             </div>
