@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import Select from 'react-select'; // Import Select for skill suggestions
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
 import { Label } from './ui/label';
-import { Input } from './ui/input'; // Import Textarea if available
+import { Input } from './ui/input';
 import { Button } from './ui/button';
-import { Loader2, X } from 'lucide-react'; // Importing the close icon (X)
+import { Loader2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { USER_API_END_POINT } from '@/utils/constant';
@@ -13,6 +14,7 @@ import { Textarea } from './ui/textarea';
 
 const UpdateProfileDialog = ({ open, setOpen }) => {
     const [loading, setLoading] = useState(false);
+    const [skillsOptions, setSkillsOptions] = useState([]); // Store skill suggestions
     const { user } = useSelector(store => store.auth);
 
     const [input, setInput] = useState({
@@ -20,7 +22,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         email: user?.email || "",
         phoneNumber: user?.phoneNumber || "",
         bio: user?.profile?.bio || "",
-        skills: user?.profile?.skills?.map(skill => skill) || "",
+        skills: user?.profile?.skills || [],
         file: user?.profile?.resume || ""
     });
 
@@ -28,12 +30,29 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
 
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
-    }
+    };
 
     const fileChangeHandler = (e) => {
         const file = e.target.files?.[0];
         setInput({ ...input, file });
-    }
+    };
+
+    const fetchSkillSuggestions = async (inputValue) => {
+        if (!inputValue) return;
+        try {
+            const response = await axios.get(`https://restcountries.com/v3.1/all`); // Replace with a real skills API
+            const skills = response.data
+                .map(country => ({ label: country.name.common, value: country.name.common })) // Map data to {label, value} format
+                .filter(skill => skill.label.toLowerCase().includes(inputValue.toLowerCase()));
+            setSkillsOptions(skills);
+        } catch (error) {
+            console.error("Error fetching skills suggestions:", error);
+        }
+    };
+
+    const handleSkillsChange = (selectedSkills) => {
+        setInput({ ...input, skills: selectedSkills });
+    };
 
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -42,10 +61,12 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         formData.append("email", input.email);
         formData.append("phoneNumber", input.phoneNumber);
         formData.append("bio", input.bio);
-        formData.append("skills", input.skills);
+        formData.append("skills", JSON.stringify(input.skills.map(skill => skill.value))); // Save selected skills
+
         if (input.file) {
             formData.append("file", input.file);
         }
+
         try {
             setLoading(true);
             const res = await axios.post(`${USER_API_END_POINT}/profile/update`, formData, {
@@ -65,7 +86,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
             setLoading(false);
         }
         setOpen(false);
-    }
+    };
 
     return (
         <div>
@@ -121,12 +142,16 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                             </div>
                             <div className='grid grid-cols-4 items-center gap-4'>
                                 <Label htmlFor="skills" className="text-right">Skills</Label>
-                                <Input
+                                <Select
+                                    isMulti
                                     id="skills"
                                     name="skills"
                                     value={input.skills}
-                                    onChange={changeEventHandler}
+                                    onInputChange={fetchSkillSuggestions}
+                                    onChange={handleSkillsChange}
+                                    options={skillsOptions}
                                     className="col-span-3"
+                                    placeholder="Type to search skills..."
                                 />
                             </div>
                             <div className='grid grid-cols-4 items-center gap-4'>
@@ -155,6 +180,6 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
             </Dialog>
         </div>
     );
-}
+};
 
 export default UpdateProfileDialog;
