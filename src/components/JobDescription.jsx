@@ -82,7 +82,7 @@ const JobDescription = () => {
                     isApplied ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#7209b7] hover:bg-[#5f32ad]'
                 }`}
             >
-                {loading ? 'Applying...' : isApplied ? 'Already Applied' : 'Apply Now'}
+                {loading ? 'Applying...' : isApplied ? 'Job Applied' : 'Apply Now'}
             </Button>
         </div>
 
