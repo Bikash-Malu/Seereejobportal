@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { APPLICATION_API_END_POINT, JOB_API_END_POINT } from '@/utils/constant';
 import { setSingleJob } from '@/redux/jobSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
-
+import { FiArrowLeft } from 'react-icons/fi';
 const JobDescription = () => {
     const { singleJob } = useSelector((store) => store.job);
     const { user } = useSelector((store) => store.auth);
     const isInitiallyApplied = singleJob?.applications?.some((application) => application.applicant === user?._id) || false;
     const [isApplied, setIsApplied] = useState(isInitiallyApplied);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const params = useParams();
     const jobId = params.id;
@@ -55,47 +56,56 @@ const JobDescription = () => {
 
     return (
         <div className="max-w-5xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 border-b pb-4">
-                <div className="md:w-3/4 mb-4 md:mb-0">
-                    <h1 className="text-3xl font-bold text-gray-800 mb-2">{singleJob?.title}</h1>
-                    <div className="flex flex-wrap gap-2">
-                        <Badge className="text-blue-700 font-bold bg-blue-100 px-2 py-1 rounded">{singleJob?.position} Positions</Badge>
-                        <Badge className="text-[#F83002] font-bold bg-red-100 px-2 py-1 rounded">{singleJob?.jobType}</Badge>
-                        <Badge className="text-[#b709ab] font-bold bg-purple-100 px-2 py-1 rounded">{singleJob?.salary} LPA</Badge>
-                    </div>
+        {/* Back Button */}
+        <button
+            onClick={() => navigate('/jobs')}
+            className="flex items-center text-gray-600 mb-4 hover:text-gray-800 transition-all"
+        >
+            <FiArrowLeft className="mr-2" />
+            Back
+        </button>
+
+        {/* Header */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 border-b pb-4">
+            <div className="md:w-3/4 mb-4 md:mb-0">
+                <h1 className="text-3xl font-bold text-gray-800 mb-2">{singleJob?.title}</h1>
+                <div className="flex flex-wrap gap-2">
+                    <Badge className="text-blue-700 font-bold bg-blue-100 px-2 py-1 rounded">{singleJob?.position} Positions</Badge>
+                    <Badge className="text-[#F83002] font-bold bg-red-100 px-2 py-1 rounded">{singleJob?.jobType}</Badge>
+                    <Badge className="text-[#b709ab] font-bold bg-purple-100 px-2 py-1 rounded">{singleJob?.salary} LPA</Badge>
                 </div>
-                <Button
-                    onClick={isApplied || loading ? null : applyJobHandler}
-                    disabled={isApplied || loading}
-                    className={`py-2 px-4 text-white rounded-md transition-all duration-300 ${
-                        isApplied ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#7209b7] hover:bg-[#5f32ad]'
-                    }`}
-                >
-                    {loading ? 'Applying...' : isApplied ? 'Already Applied' : 'Apply Now'}
-                </Button>
+            </div>
+            <Button
+                onClick={isApplied || loading ? null : applyJobHandler}
+                disabled={isApplied || loading}
+                className={`py-2 px-4 text-white rounded-md transition-all duration-300 ${
+                    isApplied ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#7209b7] hover:bg-[#5f32ad]'
+                }`}
+            >
+                {loading ? 'Applying...' : isApplied ? 'Already Applied' : 'Apply Now'}
+            </Button>
+        </div>
+
+        {/* Job Details */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Left Column */}
+            <div>
+                <h2 className="text-xl font-semibold mb-4">Job Details</h2>
+                <p className="text-gray-700 mb-2"><span className="font-bold">Role:</span> {singleJob?.title}</p>
+                <p className="text-gray-700 mb-2"><span className="font-bold">Location:</span> {singleJob?.location}</p>
+                <p className="text-gray-700 mb-2"><span className="font-bold">Description:</span> {singleJob?.description}</p>
+                <p className="text-gray-700 mb-2"><span className="font-bold">Experience:</span> {singleJob?.experienceLevel} yrs</p>
             </div>
 
-            {/* Job Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Left Column */}
-                <div>
-                    <h2 className="text-xl font-semibold mb-4">Job Details</h2>
-                    <p className="text-gray-700 mb-2"><span className="font-bold">Role:</span> {singleJob?.title}</p>
-                    <p className="text-gray-700 mb-2"><span className="font-bold">Location:</span> {singleJob?.location}</p>
-                    <p className="text-gray-700 mb-2"><span className="font-bold">Description:</span> {singleJob?.description}</p>
-                    <p className="text-gray-700 mb-2"><span className="font-bold">Experience:</span> {singleJob?.experienceLevel} yrs</p>
-                </div>
-
-                {/* Right Column */}
-                <div>
-                    <h2 className="text-xl font-semibold mb-4">Additional Information</h2>
-                    <p className="text-gray-700 mb-2"><span className="font-bold">Salary:</span> {singleJob?.salary} LPA</p>
-                    <p className="text-gray-700 mb-2"><span className="font-bold">Total Applicants:</span> {singleJob?.applications?.length}</p>
-                    <p className="text-gray-700 mb-2"><span className="font-bold">Posted Date:</span> {singleJob?.createdAt.split("T")[0]}</p>
-                </div>
+            {/* Right Column */}
+            <div>
+                <h2 className="text-xl font-semibold mb-4">Additional Information</h2>
+                <p className="text-gray-700 mb-2"><span className="font-bold">Salary:</span> {singleJob?.salary} LPA</p>
+                <p className="text-gray-700 mb-2"><span className="font-bold">Total Applicants:</span> {singleJob?.applications?.length}</p>
+                <p className="text-gray-700 mb-2"><span className="font-bold">Posted Date:</span> {singleJob?.createdAt.split("T")[0]}</p>
             </div>
         </div>
+    </div>
     );
 };
 

@@ -116,12 +116,7 @@ const Navbar = () => {
                         alt="@shadcn"
                       />
                     </Avatar>
-                    <div>
-                      <h4 className="font-medium">{user?.fullname}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {user?.profile?.bio}
-                      </p>
-                    </div>
+                 
                   </div>
                   <div className="flex flex-col my-2 text-gray-600">
                     {user && user.role === "student" && (
@@ -163,7 +158,7 @@ const Navbar = () => {
                             </div>
                             <div className="mt-4 space-y-2 text-center">
                               <p><strong>Email:</strong> {user?.email}</p>
-                              <p><strong>Bio:</strong> {user?.profile?.bio || "Experienced recruiter skilled in talent acquisition and employee engagement, connecting top talent with roles that drive success"}</p>
+                              <p><strong>Bio:</strong> {user?.profile?.bio || "Experienced recruiter skilled in talent acquisition and employee engagement."}</p>
                               <p><strong>PhoneNumber:</strong> {user?.phoneNumber || "No bio available"}</p>
                             </div>
                           </div>
