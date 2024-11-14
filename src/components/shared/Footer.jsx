@@ -14,10 +14,11 @@ const Footer = () => {
 
           {/* Developer Information Section */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left mb-4 md:mb-0">
-            <p className="text-md text-gray-600 font-medium">
-              Developed by Bikash & Sandeep😊
-            </p>
-          </div>
+    <p className="text-md text-gray-600 font-medium">
+        © {new Date().getFullYear()} All rights reserved.
+    </p>
+</div>
+
 
           {/* Social Media Icons Section */}
           <div className="flex justify-center md:justify-start space-x-4 mt-4 md:mt-0">
