@@ -39,25 +39,26 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
 
     const fetchSkills = async (query) => {
         const myHeaders = new Headers();
-        myHeaders.append("apikey", "V72c9SpQvPhPkRZEFKUeS3WLcm0eD1jX");  // Replace with your API key
-
+        myHeaders.append("apikey", "V72c9SpQvPhPkRZEFKUeS3WLcm0eD1jX");  // Use your API key here
+    
         const requestOptions = {
             method: 'GET',
             redirect: 'follow',
             headers: myHeaders
         };
-
+    
         try {
             const response = await fetch(`https://api.apilayer.com/skills?q=${query}`, requestOptions);
             const result = await response.json();
             if (result && result.skills) {
                 const skills = result.skills.map(skill => ({ label: skill, value: skill }));
-                setSkillOptions(skills);
+                setSkillOptions(skills); // Assuming setSkillOptions is a function to store the skill suggestions
             }
         } catch (error) {
             console.error('Error fetching skills:', error);
         }
     };
+    
 
     const submitHandler = async (e) => {
         e.preventDefault();
